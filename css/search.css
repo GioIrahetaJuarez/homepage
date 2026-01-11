@@ -1,0 +1,212 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+    background-color: #ffffff;
+    color: #333333;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+#container {
+    width: 50%;
+    margin: 0 auto;
+    padding: 20px;
+    flex-grow: 1;
+    position: relative;
+}
+
+/* Header Sections */
+.section {
+    margin-bottom: 40px;
+}
+
+.section-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: #666;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+}
+
+/* Photo Items */
+.photo-item {
+    width: 10vw;
+    height: 10vw;
+    position: relative;
+    overflow: visible;
+}
+
+.photo-item img {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    cursor: zoom-in;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+img:hover {
+    transform: translateY(-4px);
+}
+
+/* Grid Layout - Default (Traditional Grid) */
+.photo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(10vw, 1fr));
+    gap: 20px;
+}
+
+/* Special sizes for certain items in categories view */
+.photo-grid-categories .photo-item:nth-child(5n+1) {
+    grid-column: span 2;
+    grid-row: span 2;
+}
+
+/* Grid Layout - Color */
+.photo-grid-color {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: repeat(12, 70px);
+    gap: 15px;
+    height: 100%;
+}
+
+.photo-grid-color .photo-item {
+    grid-column: auto;
+    grid-row: auto;
+    width: 100%;
+    padding-bottom: 100%;
+    transform: rotate(var(--rotation, 0deg));
+}
+
+/* Randomly positioned items */
+.random-position {
+    position: absolute;
+}
+
+/* Search Bar */
+.search-bar {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 300px;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 30px;
+    background-color: #f0f0f0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    font-size: 14px;
+    text-align: center;
+}
+
+/* Bottom Bar */
+.bottom-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 15px;
+    background-color: #ffffff;
+    border-top: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    z-index: 100;
+}
+
+.toggle-button {
+    padding: 8px 15px;
+    background-color: #f0f0f0;
+    border: 1px solid #d0d0d0;
+    border-radius: 20px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.toggle-button:hover {
+    background-color: #e0e0e0;
+}
+
+.toggle-button.active {
+    background-color: #333;
+    color: white;
+}
+
+.bottom-text {
+    margin-left: 15px;
+    font-size: 14px;
+    color: #666;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .photo-grid-default, .photo-grid-categories {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 10px;
+    }
+    
+    .photo-grid-color {
+        grid-template-rows: repeat(20, 50px);
+    }
+    
+    .search-bar {
+        width: 250px;
+        bottom: 70px;
+    }
+}
+
+/* Fullscreen Dialog */
+dialog {
+    max-width: none;  /* Changed from 95vw */
+    max-height: none; /* Changed from 95vh */
+    width: 100vw;     /* Added */
+    height: 100vh;    /* Added */
+    border: none;
+    padding: 0;
+    background: transparent;
+}
+
+dialog::backdrop {
+    background-color: rgba(0, 0, 0, 0.95);
+}
+
+dialog img {
+    width: 100%;      /* Changed from max-width: 95vw */
+    height: 100%;     /* Changed from max-height: 95vh */
+    display: block;
+    object-fit: contain;
+}
+
+.close-dialog {
+    position: fixed;  /* Changed from absolute */
+    top: 20px;
+    right: 20px;
+    background: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 30px;
+    line-height: 40px; /* Added to vertically center × */
+    text-align: center; /* Added to horizontally center × */
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    padding: 0;       /* Added */
+}
+
+.close-dialog:hover {
+    background: #f0f0f0;
+}
+
+/* Add pointer to thumbnails */
+.photo-item img {
+    cursor: zoom-in;
+}

@@ -22,24 +22,41 @@ class Quad{
  let pic;
  
  function preload() {
-   pic = loadImage('../img/do.jpg');
+   pic = loadImage('../img/gallery/portrait_photo.jpg');
    console.log(pic);
  }
  
- function setup() {
-  let scaleFactor = 5;
-   canvasContainer = $("#canvas-container");
-   w = canvasContainer.width();
-   h = canvasContainer.height();
-   let canvas = createCanvas(w,h);
-   canvas.parent(canvasContainer[0]);
-   resizeScreen();
+let imageOffsetX = 0; // Add at top of file
+let imageOffsetY = 0;
 
-   Tile = new Quad(0,0, 30, 30)
-   Source = new Quad(0,0, 90 * scaleFactor, 90 * scaleFactor)
-   Destination = new Quad(0, 0, 30, 30)
- }
- 
+function setup() {
+  let scaleFactor = 5;
+  canvasContainer = $("#canvas-container");
+  w = canvasContainer.width();
+  h = canvasContainer.height();
+  let canvas = createCanvas(w, h);
+  canvas.parent(canvasContainer[0]);
+  resizeScreen();
+
+  Tile = new Quad(0, 0, 50, 50);
+  
+  // NOW pic is loaded, so pic.width and pic.height are available
+  let sourceSize = 100 * scaleFactor;
+  let centerOffsetX = (pic.width - sourceSize) / 2;
+  let centerOffsetY = (pic.height - sourceSize) / 2;
+  
+  Source = new Quad(centerOffsetX, centerOffsetY, sourceSize, sourceSize);
+  Destination = new Quad(0, 0, 30, 30);
+}
+
+// Then you can adjust with arrow keys or mouse
+function keyPressed() {
+  if (keyCode === LEFT_ARROW) imageOffsetX -= 10;
+  if (keyCode === RIGHT_ARROW) imageOffsetX += 10;
+  if (keyCode === UP_ARROW) imageOffsetY -= 10;
+  if (keyCode === DOWN_ARROW) imageOffsetY += 10;
+}
+
  //Diffract part of image and place somewhere
  function diffract(Tile, Src, Dest){
    /*

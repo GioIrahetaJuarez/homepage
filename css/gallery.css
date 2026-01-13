@@ -164,3 +164,15 @@ img{
     z-index: 2;
     pointer-events: all;
 }
+
+.progress-circle {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: rgb(211, 211, 211);
+    top: 50%;
+    transform: translate(-50%, -50%);
+    left: 0%;
+    transition: left 1s ease;
+}

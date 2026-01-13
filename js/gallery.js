@@ -10,12 +10,52 @@
 //     x.style.backgroundColor = `rgb(${r},${g},${b})`;
 // }
 
-//Scrollable Gallery---------------------------------------
+
+//Populating --------------------------------------------------------------------------
+
+
+function createSlideContent(obj) {
+        const page = document.createElement('div');
+        page.classList.add('page vis');
+        const image_container = document.createElement('div');
+        image_container.classList.add('vis image_container');
+        const thumbnail = document.createElement('img');
+        thumbnail.classList.add('thumbnail');
+        const marker = document.add('marker vis');
+
+        const info = document.createElement("vis info");
+
+        text.classList.add('section-title');
+        const grid = document.createElement('h2');
+        grid.classList.add('photo-grid');
+        section.append(text,grid);
+        grid.id = obj.medium;
+        container.append(section);
+}
+
+{/* <div  class="page vis">
+            <div class="vis image_container">
+                <img class="thumbnail" src="../img/gallery/art/angels_2024.jpg"/>
+                    <div class="marker vis"></div>
+            </div>
+            <div class="vis info">
+                <div class="essential">Oil on Canvas Angels 2024 3' x 2'</div>
+                <div class="Tags?"></div>
+                <div class="paragraphical">
+                    These pieces of work included 
+                    heavy sourcing from imagination.
+                    Not only was the painting huge but the sizing also 
+                    invited for a more vigorous painting application
+                </div>
+            </div>
+        </div> */}
+//Scrollable Gallery-------------------------------------------------------------------
 let array = document.getElementById("array");
 let position = 0;
+let line_break = document.querySelector(".line_break");
 
 // Start at 0-100 and move negatively
-// +------+------------+
+// +------+------+------+
 // |      |      |      |
 // |      |      |      |
 // |      |      |      |
@@ -24,16 +64,18 @@ let position = 0;
 artworks_num = 4
 maxarray_pos = -((artworks_num - 1) * 100)
 
-//Key Events
+//Scroll
 document.addEventListener('keydown',function(event) {
     let key = event.key;
     if (position < 0 && (key=='ArrowLeft' || key=='a')){
         position += 100;
         array.style.transform = `translateX(${position}vw)`;
+        updateProgressIndicator();
     }else if (position > maxarray_pos && (key == 'ArrowRight' || key == 'd')){
         console.log(position);
         position -= 100;
         array.style.transform = `translateX(${position}vw)`;
+        updateProgressIndicator();
     }
 })
 
@@ -61,6 +103,24 @@ function toggleFullScreen(element) {
         }
     }
     }
+
+
+//God i want you bad
+function createProgressIndicator() {
+    let circle = document.createElement('div');
+    circle.className = 'progress-circle';
+    line_break.appendChild(circle);
+}
+
+// Update circle position based on scroll position
+function updateProgressIndicator() {
+    let circle = document.querySelector('.progress-circle');
+    let currentIndex = Math.abs(position / 100);
+    let progressPercent = (currentIndex / (artworks_num - 1)) * 100;
+    circle.style.left = `${progressPercent}%`;
+}
+
+createProgressIndicator();
 
 //Click Event Listener --- class name returns an HTML collection - multiple elements
 img_nodelist = document.querySelectorAll(".thumbnail");
@@ -108,8 +168,10 @@ img_nodelist.forEach((img) => {
 left_arrow.addEventListener('click', (event) => {
     position += 100;
     array.style.transform = `translateX(${position}vw)`;
+    updateProgressIndicator()
 })
 right_arrow.addEventListener('click', (event) => {
     position -= 100;
     array.style.transform = `translateX(${position}vw)`;
+    updateProgressIndicator();
 })

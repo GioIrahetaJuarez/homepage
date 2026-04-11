@@ -1,4 +1,4 @@
-//Making of visible divs------------------------------------
+//Making of visible divs for debugging --------------------------------------------------
 // let elements = document.getElementsByClassName("vis");
 // console.log(elements);
 // console.log(elements[0].style.backgroundColor)
@@ -12,7 +12,6 @@
 
 
 //Populating --------------------------------------------------------------------------
-
 
 function createSlideContent(obj) {
         const page = document.createElement('div');
@@ -33,22 +32,6 @@ function createSlideContent(obj) {
         container.append(section);
 }
 
-{/* <div  class="page vis">
-            <div class="vis image_container">
-                <img class="thumbnail" src="../img/gallery/art/angels_2024.jpg"/>
-                    <div class="marker vis"></div>
-            </div>
-            <div class="vis info">
-                <div class="essential">Oil on Canvas Angels 2024 3' x 2'</div>
-                <div class="Tags?"></div>
-                <div class="paragraphical">
-                    These pieces of work included 
-                    heavy sourcing from imagination.
-                    Not only was the painting huge but the sizing also 
-                    invited for a more vigorous painting application
-                </div>
-            </div>
-        </div> */}
 //Scrollable Gallery-------------------------------------------------------------------
 let array = document.getElementById("array");
 let position = 0;
@@ -166,12 +149,16 @@ img_nodelist.forEach((img) => {
 })
 
 left_arrow.addEventListener('click', (event) => {
-    position += 100;
-    array.style.transform = `translateX(${position}vw)`;
-    updateProgressIndicator()
+    if (position < 0) {
+        position += 100;
+        array.style.transform = `translateX(${position}vw)`;
+        updateProgressIndicator()
+    }
 })
 right_arrow.addEventListener('click', (event) => {
-    position -= 100;
-    array.style.transform = `translateX(${position}vw)`;
-    updateProgressIndicator();
+    if (position > maxarray_pos) {
+        position -= 100;
+        array.style.transform = `translateX(${position}vw)`;
+        updateProgressIndicator();
+    }
 })

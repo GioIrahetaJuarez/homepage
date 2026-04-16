@@ -36,8 +36,6 @@ function processQueue() {
 // ───────────────────────────────────────────────────────────────────────────
 
 const imageUrls = data.map(img => img.url);
-init();
-animate();
 
 function init() {
     scene = new THREE.Scene();
@@ -61,6 +59,7 @@ function init() {
     points.forEach((point, index) => {
         if (index < imageUrls.length) {
             createImageAtPoint(point, '../' + imageUrls[index]);
+            
         }
     });
 
@@ -96,6 +95,8 @@ function fibonacciSpherePoints(samples, radius) {
 function createImageAtPoint(point, imageUrl) {
     // ── Performance: use queued loading instead of firing all at once ──
     enqueueLoad(imageUrl, (texture) => {
+        if (!imageGroup) return;
+        texture = resizeTexture(texture, 128);
         // ── Fix: derive aspect ratio from the actual image ──
         const aspect = texture.image.width / texture.image.height;
         const width = 20;
@@ -117,9 +118,25 @@ function createImageAtPoint(point, imageUrl) {
     });
 }
 
-function animate() {
-    requestAnimationFrame(animate);
+function resizeTexture(texture, maxSize = 128) {
+    const img = texture.image;
+    const scale = Math.min(1, maxSize / Math.max(img.width, img.height));
+    if (scale === 1) return texture;
 
+    const canvas = document.createElement('canvas');
+    canvas.width  = Math.floor(img.width  * scale);
+    canvas.height = Math.floor(img.height * scale);
+    canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+
+    const small = new THREE.CanvasTexture(canvas);
+    small.minFilter = THREE.LinearFilter;
+    small.generateMipmaps = false;
+    texture.dispose();
+    return small;
+}
+
+// Modified this to no self calling errr more and more complex
+function animate() {
     if (!isDragging) {
         rotationSpeed.x *= dampingFactor;
         rotationSpeed.y *= dampingFactor;
@@ -128,11 +145,11 @@ function animate() {
     }
 
     imageGroup.children.forEach(child => {
-    if (child.isMesh) {
-        // True inverse of the group's rotation using quaternions
-        child.quaternion.copy(imageGroup.quaternion).invert();
-    }
-});
+        if (child.isMesh) {
+            child.quaternion.copy(imageGroup.quaternion).invert();
+        }
+    });
+
     renderer.render(scene, camera);
 }
 
@@ -212,3 +229,31 @@ function onGestureChange(event) {
 }
 
 function onGestureEnd() { initialGestureScale = null; }
+
+let initialized = false;
+
+export default {
+    name: 'Sphere',
+    _frame: null,
+    enter() {
+        if (!initialized) {
+            init();           // runs first time
+            initialized = true;
+        } else {
+        // just re-append the canvas
+            document.body.appendChild(renderer.domElement);
+            window.addEventListener('resize', onWindowResize);
+            window.addEventListener('wheel', onMouseWheel, { passive: false });
+        }
+        //Animation
+        const tick = () => { animate(); this._frame = requestAnimationFrame(tick); };
+        this._frame = requestAnimationFrame(tick);
+    },
+    update() {},
+    exit() {
+        cancelAnimationFrame(this._frame);
+        window.removeEventListener('resize', onWindowResize);
+        window.removeEventListener('wheel', onMouseWheel);
+        renderer.domElement.remove(); // just detach, wont dispose
+    }
+};

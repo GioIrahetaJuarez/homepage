@@ -1,7 +1,9 @@
-import data from '../img/img.json' with {type: 'json'};
+import data from '../img/sphere.json' with {type: 'json'};
+import { createSphereRevealAnimator } from './sphereRevealAnimator.js';
 
 let camera, scene, renderer;
 let imageGroup;
+let revealAnimator;
 const radius = 150;
 let isDragging = false;
 let prevMousePosition = { x: 0, y: 0 };
@@ -9,6 +11,8 @@ let rotationSpeed = { x: 0, y: 0 };
 const dampingFactor = 0.95;
 const minZoom = 100;
 const maxZoom = 800;
+const INITIAL_LOAD_COUNT = 40;
+const PROGRESSIVE_LOAD_DELAY = 20;
 
 // ── Performance: limit concurrent texture loads ──────────────────────────────
 const MAX_CONCURRENT = 6; // match browser's per-host connection limit
@@ -53,13 +57,19 @@ function init() {
 
     imageGroup = new THREE.Group();
     scene.add(imageGroup);
+    revealAnimator = createSphereRevealAnimator();
 
     const points = fibonacciSpherePoints(imageUrls.length, radius);
 
     points.forEach((point, index) => {
         if (index < imageUrls.length) {
-            createImageAtPoint(point, '../' + imageUrls[index]);
-            
+            const loadImage = () => createImageAtPoint(point, '../' + imageUrls[index], index === imageUrls.length - 1);
+
+            if (index < INITIAL_LOAD_COUNT) {
+                loadImage();
+            } else {
+                setTimeout(loadImage, (index - INITIAL_LOAD_COUNT) * PROGRESSIVE_LOAD_DELAY);
+            }
         }
     });
 
@@ -92,11 +102,10 @@ function fibonacciSpherePoints(samples, radius) {
     return points;
 }
 
-function createImageAtPoint(point, imageUrl) {
+function createImageAtPoint(point, imageUrl, isFinal = false) {
     // ── Performance: use queued loading instead of firing all at once ──
     enqueueLoad(imageUrl, (texture) => {
         if (!imageGroup) return;
-        texture = resizeTexture(texture, 128);
         // ── Fix: derive aspect ratio from the actual image ──
         const aspect = texture.image.width / texture.image.height;
         const width = 20;
@@ -108,31 +117,16 @@ function createImageAtPoint(point, imageUrl) {
 
         const material = new THREE.MeshBasicMaterial({
             map: texture,
-            transparent: true
+            transparent: true,
+            opacity: 0
         });
 
         const geometry = new THREE.PlaneGeometry(width, height);
         const mesh = new THREE.Mesh(geometry, material);
         mesh.position.copy(point);
         imageGroup.add(mesh);
+        revealAnimator.register(mesh, point, isFinal);
     });
-}
-
-function resizeTexture(texture, maxSize = 128) {
-    const img = texture.image;
-    const scale = Math.min(1, maxSize / Math.max(img.width, img.height));
-    if (scale === 1) return texture;
-
-    const canvas = document.createElement('canvas');
-    canvas.width  = Math.floor(img.width  * scale);
-    canvas.height = Math.floor(img.height * scale);
-    canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-
-    const small = new THREE.CanvasTexture(canvas);
-    small.minFilter = THREE.LinearFilter;
-    small.generateMipmaps = false;
-    texture.dispose();
-    return small;
 }
 
 // Modified this to no self calling errr more and more complex
@@ -150,6 +144,7 @@ function animate() {
         }
     });
 
+    revealAnimator.update();
     renderer.render(scene, camera);
 }
 

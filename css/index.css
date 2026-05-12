@@ -20,27 +20,27 @@ p {
 
 @font-face {
   font-family: Helvetica;
-  src: url(./Helvetica.ttf);
+  src: url(../assets/Helvetica.ttf);
 }
 
 @font-face {
   font-family: Helvetica-Oblique;
-  src: url(./Helvetica-Oblique.ttf);
+  src: url(../assets/Helvetica-Oblique.ttf);
 }
 
 
 /*Left section--------------------------------------------------------------------------------------- */
 
 .left-content {
-  width: 55.55%;
+  width: 70%;
   height: 100vh;
 
   position: fixed;
-  z-index: -1;
+  z-index: 0;
 }
 
 .left-pseudo {
-  width: 55.55%;
+  width: 70%;
   height: 100vh;
 }
 
@@ -53,15 +53,16 @@ p {
   font-family: Helvetica;
   font-weight: bolder;
   z-index: 20;
+  pointer-events: none;
 }
 
-/* Default to width 50% and constraint for height */
+/* Default to width 70% and constraint for height */
 #main-image {
-  width: 55.55vw;
+  width: 70vw;
   height: auto;
 
   position: absolute;
-  z-index: -1;
+  z-index: 0;
 }
 
 /* Custom aspect overflow */
@@ -74,11 +75,11 @@ p {
 
 #canvas-container{
   position: fixed;
-  width: 55.55%;
+  width: 70%;
   height: 100vh;
   top: 0;
   left: 0;
-  z-index: -1;
+  z-index: 1;
 }
 
 .bottom-icons {
@@ -95,7 +96,18 @@ p {
   left: 2.5%;
 }
 
+#sketch {
+  position: fixed;
+  width: 70vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  z-index: 2;
+}
 
+#sketch canvas {
+  display: block;
+}
 
 /*Right Section-------------------------------------------------------------------------------------- */
 
@@ -105,13 +117,14 @@ p {
   text-align: left;
   font-family: Helvetica;
   font-weight: bolder;
-
 }
 
 .right-content {
-  width: 44.44%;
+  width: 30%;
   right:0px;
   background-color: rgb(255, 255, 255);
+  position: relative;
+  z-index: 3;
 }
 
 #bio-photo {
@@ -170,13 +183,17 @@ p {
 /*--------Entry-------------------------------*/
 
 .titles p {
-  font-size: 5em;
+  font-size: 4em;
   line-height: 100%;
 
   margin: 0% 0% 2.5% 5%;
 
   font-family: Helvetica;
   font-weight: bold;
+
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
 
 }
 
@@ -187,7 +204,7 @@ p {
 
   margin: 0% auto 5% 5%; 
 
-  border-radius: 100px;
+  border-radius: 60px;
   background-color: red;
   overflow: hidden;
 }

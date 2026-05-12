@@ -87,9 +87,11 @@ new p5(function(p) {
     p.fill(titleColor);
     p.drawingContext.font = `${titleWeight} ${titleSize}px ${titleFamily}`;
 
-    if (!active) {
-      p.cursor('pointer');
-    } else if (dragging) {
+    const hoveringTitle = hitting(p.mouseX, p.mouseY);
+
+    if (dragging) {
+      p.cursor('grab');
+    } else if (hoveringTitle) {
       p.cursor('grab');
     } else {
       p.cursor('default');

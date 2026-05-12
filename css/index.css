@@ -37,6 +37,7 @@ p {
 
   position: fixed;
   z-index: 0;
+  overflow: hidden;
 }
 
 .left-pseudo {
@@ -56,21 +57,16 @@ p {
   pointer-events: none;
 }
 
-/* Default to width 70% and constraint for height */
 #main-image {
-  width: 70vw;
-  height: auto;
-
   position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
   z-index: 0;
-}
-
-/* Custom aspect overflow */
-@media (max-aspect-ratio: 1374/911) {
-  #main-image {
-    width:auto;
-    height: 100vh;
-  }
 }
 
 #canvas-container{
@@ -113,7 +109,7 @@ p {
 
 #main-title-right {
   font-size: 10em;
-  margin: 0 0 0 0;
+  margin: 10px 0 0 0;
   text-align: left;
   font-family: Helvetica;
   font-weight: bolder;
@@ -204,13 +200,17 @@ p {
 
   margin: 0% auto 5% 5%; 
 
-  border-radius: 60px;
+  border-radius: 50px;
   background-color: red;
   overflow: hidden;
 }
 
 .big-thumbnail img {
   width:100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
 }
 
 /* Text */

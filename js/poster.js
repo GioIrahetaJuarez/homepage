@@ -1,9 +1,12 @@
-const POSTER_IMAGE = '../img/gallery/design/FAILED_poster.jpg';
+const images = [
+    '../img/gallery/design/FAILED_poster.jpg',
+    '../img/gallery/art/Made_physical.jpg'
+];
 const stage = document.querySelector('#poster-stage');
 
 let camera;
 let renderer;
-let poster;
+let posterGroup;
 let targetYaw = 0;
 let targetTilt = 0;
 
@@ -19,7 +22,12 @@ function init() {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     stage.appendChild(renderer.domElement);
 
-    loadPoster();
+    posterGroup = new THREE.Group();
+    posterGroup.position.set(0, 0, 0);
+    scene.add(posterGroup);
+
+    loadPoster(images[0], 0, 0, 0, 0, 0, 0);
+    loadPoster(images[1], 4, 0, 1, 0, (Math.PI / 2), 0);
     resize();
 
     window.addEventListener('resize', resize);
@@ -27,10 +35,10 @@ function init() {
     renderer.setAnimationLoop(animate);
 }
 
-function loadPoster() {
+function loadPoster(img, xpos, ypos, zpos, xrot, yrot, zrot) {
     const loader = new THREE.TextureLoader();
 
-    loader.load(POSTER_IMAGE, (texture) => {
+    loader.load(img, (texture) => {
         texture.minFilter = THREE.LinearFilter;
         texture.generateMipmaps = false;
 
@@ -43,10 +51,10 @@ function loadPoster() {
             side: THREE.DoubleSide
         });
 
-        poster = new THREE.Mesh(geometry, material);
-        poster.rotation.y = targetYaw;
-        poster.rotation.x = targetTilt;
-        scene.add(poster);
+        const poster = new THREE.Mesh(geometry, material);
+        poster.position.set(xpos, ypos, zpos);
+        poster.rotation.set(xrot,yrot,zrot)
+        posterGroup.add(poster);
     });
 }
 
@@ -69,11 +77,11 @@ function onKeyDown(event) {
     const key = event.key.toLowerCase();
 
     if (key === 'a' || key === 'arrowleft') {
-        targetYaw -= Math.PI / 8;
+        targetYaw -= Math.PI / 4;
     }
 
     if (key === 'd' || key === 'arrowright') {
-        targetYaw += Math.PI / 8;
+        targetYaw += Math.PI / 4;
     }
 
     if (key === 'arrowup') {
@@ -86,9 +94,9 @@ function onKeyDown(event) {
 }
 
 function animate() {
-    if (poster) {
-        poster.rotation.y += (targetYaw - poster.rotation.y) * 0.12;
-        poster.rotation.x += (targetTilt - poster.rotation.x) * 0.12;
+    if (posterGroup) {
+        posterGroup.rotation.y += (targetYaw - posterGroup.rotation.y) * 0.12;
+        posterGroup.rotation.x += (targetTilt - posterGroup.rotation.x) * 0.12;
     }
 
     renderer.render(scene, camera);

@@ -41,7 +41,7 @@ function init() {
     loadPoster(images[2], -5, 0, 0, 0, (Math.PI / -2), 0);
     loadPoster(images[3], 0, 0, -4, 0, (Math.PI / 1), 0);
     loadPoster(images[4], 0, 0, -4.5, 0, (Math.PI / 1), 0);
-    loadSleepingPerson(images[5], 0, 0, 0, 0, 0, 0);
+    loadSleepingPerson(images[5], 0, -0.5, -45, -45, 0, 0);
     resize();
 
     window.addEventListener('resize', resize);

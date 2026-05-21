@@ -22,12 +22,6 @@ canvas {
 
 .info {
     position: fixed;
-    left: 18px;
     bottom: 18px;
-    padding: 8px 10px;
-    color: #111;
-    background: rgba(255, 255, 255, 0.72);
-    border: 1px solid rgba(0, 0, 0, 0.12);
-    font-size: 13px;
     pointer-events: none;
 }

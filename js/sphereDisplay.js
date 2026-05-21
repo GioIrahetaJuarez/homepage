@@ -1,9 +1,13 @@
 import data from '../img/sphere.json' with {type: 'json'};
+import fullData from '../img/img.json' with {type: 'json'};
 import { createSphereRevealAnimator } from './sphereRevealAnimator.js';
+import { createSphereImageModal } from './sphereImageModal.js';
 
 let camera, scene, renderer;
 let imageGroup;
 let revealAnimator;
+let imageModal;
+let sphereItems = [];
 const radius = 150;
 let isDragging = false;
 let prevMousePosition = { x: 0, y: 0 };
@@ -13,6 +17,16 @@ const minZoom = 100;
 const maxZoom = 800;
 const INITIAL_LOAD_COUNT = 40;
 const PROGRESSIVE_LOAD_DELAY = 20;
+
+function getStageSize() {
+    const bottomBar = document.querySelector('.bottom-bar');
+    const bottomBarHeight = bottomBar?.offsetHeight || 0;
+
+    return {
+        width: window.innerWidth,
+        height: window.innerHeight - bottomBarHeight
+    };
+}
 
 // ── Performance: limit concurrent texture loads ──────────────────────────────
 const MAX_CONCURRENT = 6; // match browser's per-host connection limit
@@ -46,11 +60,12 @@ function init() {
     // scene.background = new THREE.Color(0xe30000);
     scene.background = new THREE.Color(0xffffff);
 
-    camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
+    const stageSize = getStageSize();
+    camera = new THREE.PerspectiveCamera(60, stageSize.width / stageSize.height, 1, 1000);
     camera.position.z = 400;
 
     renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setSize(stageSize.width, stageSize.height);
     // ── Performance: cap pixel ratio on high-DPI screens ──
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     document.body.appendChild(renderer.domElement);
@@ -58,12 +73,14 @@ function init() {
     imageGroup = new THREE.Group();
     scene.add(imageGroup);
     revealAnimator = createSphereRevealAnimator();
+    imageModal = createSphereImageModal({ renderer, camera, imageGroup });
+    sphereItems = [];
 
     const points = fibonacciSpherePoints(imageUrls.length, radius);
 
     points.forEach((point, index) => {
         if (index < imageUrls.length) {
-            const loadImage = () => createImageAtPoint(point, '../' + imageUrls[index], index === imageUrls.length - 1);
+            const loadImage = () => createImageAtPoint(point, '../' + imageUrls[index], index === imageUrls.length - 1, index);
 
             if (index < INITIAL_LOAD_COUNT) {
                 loadImage();
@@ -102,7 +119,7 @@ function fibonacciSpherePoints(samples, radius) {
     return points;
 }
 
-function createImageAtPoint(point, imageUrl, isFinal = false) {
+function createImageAtPoint(point, imageUrl, isFinal = false, index = 0) {
     // ── Performance: use queued loading instead of firing all at once ──
     enqueueLoad(imageUrl, (texture) => {
         if (!imageGroup) return;
@@ -123,13 +140,25 @@ function createImageAtPoint(point, imageUrl, isFinal = false) {
 
         const geometry = new THREE.PlaneGeometry(width, height);
         const mesh = new THREE.Mesh(geometry, material);
-        mesh.position.copy(point);
+        const sphereItem = {
+            mesh,
+            index,
+            title: fullData[index]?.title || data[index]?.title || '',
+            thumbImageUrl: imageUrl,
+            fullImageUrl: '../' + (fullData[index]?.url || data[index]?.url),
+            basePosition: point.clone(),
+            isFinal
+        };
+
+        mesh.position.copy(sphereItem.basePosition);
         imageGroup.add(mesh);
-        revealAnimator.register(mesh, point, isFinal);
+        sphereItems.push(sphereItem);
+        revealAnimator.register(sphereItem);
+        imageModal.register(sphereItem);
     });
 }
 
-// Modified this to no self calling errr more and more complex
+// Modified this to no self calling errr whyyyyy more and more complex
 function animate() {
     if (!isDragging) {
         rotationSpeed.x *= dampingFactor;
@@ -149,9 +178,10 @@ function animate() {
 }
 
 function onWindowResize() {
-    camera.aspect = window.innerWidth / window.innerHeight;
+    const stageSize = getStageSize();
+    camera.aspect = stageSize.width / stageSize.height;
     camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setSize(stageSize.width, stageSize.height);
 }
 
 function onMouseDown(event) {

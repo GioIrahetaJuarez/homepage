@@ -7,10 +7,6 @@ Sphere,
 Gallery,
 }
 
-// ── Module Engine ──────────────────────────────────────-----
-let current = 'Sphere';
-modules[current].enter();
-
 function switchTo(id) {
 if (id === current) return;
 // EXIT current
@@ -27,6 +23,11 @@ modules[current].enter();
 }
 
 // ── Button Callbacks ──────────────────────────────────────
-document.querySelectorAll('button').forEach(btn => {
+document.querySelectorAll('.toggle-button').forEach(btn => {
 btn.addEventListener('click', () => switchTo(btn.textContent));
 });
+
+// ── Module Engine ──────────────────────────────────────-----
+let current = 'Sphere';
+modules[current].enter();
+

@@ -26,20 +26,19 @@ export function createSphereRevealAnimator(options = {}) {
         return Math.max(0, Math.min(1, value));
     }
 
-    function register(mesh, basePosition, isFinal = false) {
+    function register(sphereItem) {
         const now = performance.now();
         const start = Math.max(now, nextRevealStart);
         nextRevealStart = start + config.stagger;
 
-        mesh.userData.basePosition = basePosition.clone();
-        mesh.material.opacity = 0;
-        mesh.scale.setScalar(config.startScale);
+        sphereItem.mesh.material.opacity = 0;
+        sphereItem.mesh.scale.setScalar(config.startScale);
 
         items.push({
-            mesh,
-            basePosition: mesh.userData.basePosition,
+            mesh: sphereItem.mesh,
+            basePosition: sphereItem.basePosition,
             start,
-            isFinal,
+            isFinal: sphereItem.isFinal,
             pulsed: false
         });
     }

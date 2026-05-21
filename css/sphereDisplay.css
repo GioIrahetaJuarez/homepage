@@ -18,3 +18,45 @@ body {
             font-size: 14px;
             pointer-events: none;
         }
+
+.sphere-modal {
+    position: fixed;
+    inset: 0;
+    display: none;
+    place-items: center;
+    background: rgba(0, 0, 0, 0.92);
+    z-index: 20;
+}
+
+.sphere-modal.is-open {
+    display: grid;
+}
+
+.sphere-modal-image {
+    max-width: 92vw;
+    max-height: 88vh;
+    object-fit: contain;
+}
+
+.sphere-modal-title {
+    position: fixed;
+    left: 24px;
+    bottom: 20px;
+    color: white;
+    font-size: 14px;
+}
+
+.sphere-modal-close {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 42px;
+    height: 42px;
+    border: 0;
+    border-radius: 50%;
+    background: white;
+    color: black;
+    font-size: 30px;
+    line-height: 42px;
+    cursor: pointer;
+}

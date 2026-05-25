@@ -1,0 +1,47 @@
+@font-face {
+  font-family: Helvetica;
+  src: url(../assets/Helvetica.ttf);
+}
+
+@font-face {
+  font-family: Helvetica-Oblique;
+  src: url(../assets/Helvetica-Oblique.ttf);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+#profileimg {
+    display: flex;
+    width: 100%;
+    height: 150px;
+    align-items: center;
+    justify-content: center;
+}
+
+#bio {
+    width: 100%;
+    padding: 0px 50px;
+    font-family: Helvetica;
+    font-weight: 900;
+    font-size: 100px;
+    line-height: 85%;
+    text-align: center;
+    /* text-overflow: ellipsis; */
+}
+
+#landingSpan{
+    width: 100%;
+    height: 500px;
+    display: flex;
+    justify-content: center;
+    padding: 25%
+}
+
+img {
+    width: 100px;
+    border-radius: 50%;
+}

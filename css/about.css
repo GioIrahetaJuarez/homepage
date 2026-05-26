@@ -45,3 +45,16 @@ img {
     width: 100px;
     border-radius: 50%;
 }
+/* MObile styling changes ---------------------*/
+@media (max-width: 768px) {
+    #bio {
+    width: 100%;
+    padding: 0px 5%;
+    font-family: Helvetica;
+    font-weight: 900;
+    font-size: 13vw;
+    line-height: 85%;
+    text-align: center;
+    /* text-overflow: ellipsis; */
+}
+}

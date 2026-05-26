@@ -17,6 +17,11 @@ const minZoom = 100;
 const maxZoom = 800;
 const INITIAL_LOAD_COUNT = 40;
 const PROGRESSIVE_LOAD_DELAY = 20;
+let hasUserZoomed = false;
+
+function getInitialCameraZ() {
+    return window.innerWidth <= 768 ? 520 : 400;
+}
 
 function getStageSize() {
     const bottomBar = document.querySelector('.bottom-bar');
@@ -62,7 +67,7 @@ function init() {
 
     const stageSize = getStageSize();
     camera = new THREE.PerspectiveCamera(60, stageSize.width / stageSize.height, 1, 1000);
-    camera.position.z = 400;
+    camera.position.z = getInitialCameraZ();
 
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(stageSize.width, stageSize.height);
@@ -180,6 +185,7 @@ function animate() {
 function onWindowResize() {
     const stageSize = getStageSize();
     camera.aspect = stageSize.width / stageSize.height;
+    if (!hasUserZoomed) camera.position.z = getInitialCameraZ();
     camera.updateProjectionMatrix();
     renderer.setSize(stageSize.width, stageSize.height);
 }
@@ -205,7 +211,10 @@ function onMouseUp() { isDragging = false; }
 function onMouseWheel(event) {
     event.preventDefault();
     const newZ = camera.position.z - Math.sign(event.deltaY) * -30;
-    if (newZ >= minZoom && newZ <= maxZoom) camera.position.z = newZ;
+    if (newZ >= minZoom && newZ <= maxZoom) {
+        camera.position.z = newZ;
+        hasUserZoomed = true;
+    }
 }
 
 let prevPinchDistance = null;
@@ -236,7 +245,10 @@ function onTouchMove(event) {
         );
         if (prevPinchDistance !== null) {
             const newZ = camera.position.z + (prevPinchDistance - dist) * 0.5;
-            if (newZ >= minZoom && newZ <= maxZoom) camera.position.z = newZ;
+            if (newZ >= minZoom && newZ <= maxZoom) {
+                camera.position.z = newZ;
+                hasUserZoomed = true;
+            }
         }
         prevPinchDistance = dist;
     }
@@ -249,7 +261,10 @@ function onGestureStart(event) { event.preventDefault(); initialGestureScale = e
 function onGestureChange(event) {
     event.preventDefault();
     const newZ = camera.position.z + (initialGestureScale - event.scale) * 50;
-    if (newZ >= minZoom && newZ <= maxZoom) camera.position.z = newZ;
+    if (newZ >= minZoom && newZ <= maxZoom) {
+        camera.position.z = newZ;
+        hasUserZoomed = true;
+    }
     initialGestureScale = event.scale;
 }
 

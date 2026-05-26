@@ -36,6 +36,10 @@ function createSlideContent(obj) {
 let array = document.getElementById("array");
 let position = 0;
 let line_break = document.querySelector(".line_break");
+let touchStartX = 0;
+let touchStartY = 0;
+let touchCurrentX = 0;
+let isHorizontalSwipe = false;
 
 // Start at 0-100 and move negatively
 // +------+------+------+
@@ -44,21 +48,30 @@ let line_break = document.querySelector(".line_break");
 // |      |      |      |
 // +------+------+------+
 // 0      100    200    300
-artworks_num = 4
-maxarray_pos = -((artworks_num - 1) * 100)
+const artworks_num = document.querySelectorAll(".page").length;
+const maxarray_pos = -((artworks_num - 1) * 100);
+
+function goToPosition(nextPosition) {
+    position = Math.max(maxarray_pos, Math.min(0, nextPosition));
+    array.style.transform = `translateX(${position}vw)`;
+    updateProgressIndicator();
+}
+
+function goToPreviousSlide() {
+    if (position < 0) goToPosition(position + 100);
+}
+
+function goToNextSlide() {
+    if (position > maxarray_pos) goToPosition(position - 100);
+}
 
 //Scroll
 document.addEventListener('keydown',function(event) {
     let key = event.key;
     if (position < 0 && (key=='ArrowLeft' || key=='a')){
-        position += 100;
-        array.style.transform = `translateX(${position}vw)`;
-        updateProgressIndicator();
+        goToPreviousSlide();
     }else if (position > maxarray_pos && (key == 'ArrowRight' || key == 'd')){
-        console.log(position);
-        position -= 100;
-        array.style.transform = `translateX(${position}vw)`;
-        updateProgressIndicator();
+        goToNextSlide();
     }
 })
 
@@ -106,9 +119,9 @@ function updateProgressIndicator() {
 createProgressIndicator();
 
 //Click Event Listener --- class name returns an HTML collection - multiple elements
-img_nodelist = document.querySelectorAll(".thumbnail");
-left_arrow = document.getElementById("left");
-right_arrow = document.getElementById("right");
+const img_nodelist = document.querySelectorAll(".thumbnail");
+const left_arrow = document.getElementById("left");
+const right_arrow = document.getElementById("right");
 console.log(img_nodelist);
 
 img_nodelist.forEach((img) => {
@@ -149,16 +162,39 @@ img_nodelist.forEach((img) => {
 })
 
 left_arrow.addEventListener('click', (event) => {
-    if (position < 0) {
-        position += 100;
-        array.style.transform = `translateX(${position}vw)`;
-        updateProgressIndicator()
-    }
+    goToPreviousSlide();
 })
 right_arrow.addEventListener('click', (event) => {
-    if (position > maxarray_pos) {
-        position -= 100;
-        array.style.transform = `translateX(${position}vw)`;
-        updateProgressIndicator();
+    goToNextSlide();
+})
+
+array.addEventListener('touchstart', (event) => {
+    touchStartX = event.touches[0].clientX;
+    touchStartY = event.touches[0].clientY;
+    touchCurrentX = touchStartX;
+    isHorizontalSwipe = false;
+}, { passive: true });
+
+array.addEventListener('touchmove', (event) => {
+    touchCurrentX = event.touches[0].clientX;
+    const dx = touchCurrentX - touchStartX;
+    const dy = event.touches[0].clientY - touchStartY;
+
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 8) {
+        isHorizontalSwipe = true;
+        event.preventDefault();
+    }
+}, { passive: false });
+
+array.addEventListener('touchend', () => {
+    if (!isHorizontalSwipe) return;
+
+    const dx = touchCurrentX - touchStartX;
+    const swipeThreshold = window.innerWidth * 0.15;
+
+    if (dx < -swipeThreshold) {
+        goToNextSlide();
+    } else if (dx > swipeThreshold) {
+        goToPreviousSlide();
     }
 })

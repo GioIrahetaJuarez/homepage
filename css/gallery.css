@@ -80,6 +80,7 @@ a {
     top: 0px;
     display:flex;
     transition: transform 0.8s;
+    touch-action: pan-y;
 }
 
 .page{

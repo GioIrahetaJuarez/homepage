@@ -233,3 +233,48 @@ p {
   margin: 0 auto 5% auto;
 
 }
+
+
+/* Mobile Styling changes0-----------------------------*/
+@media (max-width: 768px) {
+  .main-flexbox {
+    display: block;
+  }
+
+  .left-content {
+    position: relative;
+    width: 100%;
+    height: 55vh;
+  }
+
+  .left-pseudo {
+    display: none;
+  }
+
+  #canvas-container,
+  #sketch {
+    position: absolute;
+    width: 100%;
+    height: 55vh;
+  }
+
+  .right-content {
+    width: 100%;
+    margin-top: 30px;
+  }
+
+  #main-title-right{
+    display: none;
+  }
+
+  .big-thumbnail {
+  width: 90%;
+  height: 175px;
+
+  margin: 0% auto 5% 5%; 
+
+  border-radius: 25px;
+  background-color: red;
+  overflow: hidden;
+}
+}
